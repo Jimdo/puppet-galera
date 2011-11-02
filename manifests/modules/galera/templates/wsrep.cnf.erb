@@ -47,9 +47,7 @@ wsrep_provider=/usr/lib64/galera/libgalera_smm.so
 wsrep_cluster_name="<%=cluster_name-%>"
 
 # Group communication system handle
-<% if master_ip -%>
-wsrep_cluster_address="gcomm://<%=master_ip-%>"
-<% end -%>
+wsrep_cluster_address="gcomm://<% if master_ip %><%=master_ip %><% end %>"
 # Human-readable node name (non-unique). Hostname by default.
 #wsrep_node_name=
 
@@ -116,7 +114,7 @@ wsrep_sst_method=mysqldump
 
 # Address on THIS node to receive SST at. DON'T SET IT TO DONOR ADDRESS!!!
 # (SST method dependent. Defaults to the first IP of the first interface)
-#wsrep_sst_receive_address=
+wsrep_sst_receive_address=<%=ipaddress_eth1%>
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
