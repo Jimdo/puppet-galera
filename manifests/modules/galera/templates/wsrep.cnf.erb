@@ -47,7 +47,7 @@ wsrep_provider=/usr/lib64/galera/libgalera_smm.so
 wsrep_cluster_name="<%=cluster_name-%>"
 
 # Group communication system handle
-wsrep_cluster_address="gcomm://<% if master_ip %><%=master_ip %><% end %>"
+wsrep_cluster_address="gcomm://<% if master_ip %><%=master_ip %><% end %>:4567"
 # Human-readable node name (non-unique). Hostname by default.
 #wsrep_node_name=
 
