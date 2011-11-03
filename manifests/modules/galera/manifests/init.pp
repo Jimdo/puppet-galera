@@ -5,19 +5,21 @@ class galera($cluster_name, $master_ip = false) {
 
     service { "mysql-galera" :
         ensure => "running",
-        require => Package[mysql-server-wsrep],
         name => "mysql",
+        require => Package["mysql-server-wsrep","galera"],
+        hasrestart => true,
+        subscribe => File["/etc/mysql/my.cnf","/etc/mysql/conf.d/wsrep.cnf"],
     }
 
     package { [ "mysql-client-5.1" ] :
-        ensure => present
+        ensure => present,
     }
 
     package { "mysql-server-wsrep" :
         ensure   => present,
         provider => "dpkg",
         source   => "/tmp/mysql-server-wsrep-5.1.58-21.1-amd64.deb",
-        require  => [ Exec[download-wsrep], Package["mysql-client-5.1"] ]
+        require  => [Exec["download-wsrep"],Package["mysql-client-5.1"]],
     }
 
     exec { "download-wsrep" :
@@ -29,7 +31,7 @@ class galera($cluster_name, $master_ip = false) {
         ensure   => present,
         provider => "dpkg",
         source   => "/tmp/galera-21.1.0-amd64.deb",
-        require  => Exec[download-galera]
+        require  => [Exec["download-galera"],Package["mysql-client-5.1"]],
     }
 
     exec { "download-galera" :
@@ -40,13 +42,21 @@ class galera($cluster_name, $master_ip = false) {
     file { "/etc/mysql/conf.d/wsrep.cnf" :
         ensure => present,
         content => template("galera/wsrep.cnf.erb"),
-#        notify => Service[mysql-galera],
-        require => Exec["set-mysql-password"],
+        require => Package["mysql-server-wsrep","galera"],
     }
-
-    exec { "set-mysql-password":
-        unless => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
-        command => "/usr/bin/mysql -uroot -e \"set wsrep_on='off'; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';\"",
-        require => Service["mysql-galera"],
+    
+    file { "/etc/mysql/my.cnf" :
+        ensure => present,
+        content => template("galera/my.cnf.erb"),
+        require => Package["mysql-server-wsrep","galera"],
+    }
+    if ( $master_ip == false ) {
+        exec { "set-mysql-password":
+            unless => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
+            command => "/usr/bin/mysql -uroot -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';\"",
+            require => Service["mysql-galera"],
+            subscribe => Service["mysql-galera"],
+            refreshonly => true,
+        }
     }
 }
