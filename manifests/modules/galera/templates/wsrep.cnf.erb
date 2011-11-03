@@ -118,7 +118,7 @@ wsrep_sst_method=mysqldump
 
 # Address on THIS node to receive SST at. DON'T SET IT TO DONOR ADDRESS!!!
 # (SST method dependent. Defaults to the first IP of the first interface)
-wsrep_sst_receive_address=<%=ipaddress_eth1%>
+wsrep_sst_receive_address=<%=ipaddress_eth1%>:3306
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>

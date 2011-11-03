@@ -4,11 +4,11 @@ class galera($cluster_name, $master_ip = false) {
     $mysql_password = "password"
 
     service { "mysql-galera" :
-        ensure      => "running",
         name        => "mysql",
-        require     => Package["mysql-server-wsrep","galera"],
+        ensure      => "running",
+        require     => [Package["mysql-server-wsrep","galera"],File["/etc/mysql/conf.d/wsrep.cnf","/etc/mysql/my.cnf"]],
         hasrestart  => true,
-        subscribe   => File["/etc/mysql/my.cnf","/etc/mysql/conf.d/wsrep.cnf"],
+        hasstatus   => true,
     }
 
     package { "mysql-client-5.1" :
@@ -52,7 +52,7 @@ class galera($cluster_name, $master_ip = false) {
     }
     exec { "set-mysql-password":
         unless      => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
-        command     => "/usr/bin/mysql -uroot -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';\"",
+        command     => "/usr/bin/mysql -uroot -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
         require     => Service["mysql-galera"],
         subscribe   => Service["mysql-galera"],
         refreshonly => true,
