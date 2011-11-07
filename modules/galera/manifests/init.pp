@@ -8,7 +8,7 @@ class galera($cluster_name, $master_ip = false) {
         ensure      => "running",
         require     => [Package["mysql-server-wsrep","galera"],File["/etc/mysql/conf.d/wsrep.cnf","/etc/mysql/my.cnf"]],
         hasrestart  => true,
-        hasstatus   => true,
+#        hasstatus   => true, // http://projects.puppetlabs.com/issues/5610
     }
 
     package { "mysql-client-5.1" :
@@ -44,7 +44,7 @@ class galera($cluster_name, $master_ip = false) {
         content     => template("galera/wsrep.cnf.erb"),
         require     => Package["mysql-server-wsrep","galera"],
     }
-    
+
     file { "/etc/mysql/my.cnf" :
         ensure      => present,
         content     => template("galera/my.cnf.erb"),
