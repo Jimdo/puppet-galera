@@ -1,9 +1,4 @@
-This is a good start to play around with the galera multi-master mysql synchronous replication.
-
-What we do:
-
- * Build a cluster of 3 (recommended) mysql nodes (you can actually
-
+This is a good start to play around with the galera multi-master mysql synchronous replication (http://www.codership.com/products/mysql_galera)
 
 HOWTO:
 
