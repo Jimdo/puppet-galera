@@ -1,0 +1,26 @@
+This is a good start to play around with the galera multi-master mysql synchronous replication.
+
+What we do:
+
+ * Build a cluster of 3 (recommended) mysql nodes (you can actually
+
+
+HOWTO:
+
+ * install vagrant: http://vagrantup.com/
+ * get debian squeeze basebox (http://vagrantbox.es) or build your own (https://github.com/jedi4ever/veewee)
+ * type "vagrant up"
+ * watch 3 nodes to get provisioned
+ * play around (add a database and data, chaos-monkey nodes etc.)
+
+
+WARNING
+
+Change the mysql root password in production and limit access to galera cluster members!
+
+
+TODO
+
+ * naming: master -> donor
+ * put a load balancer in front of the cluster
+ * make cluster "masterless"
