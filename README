@@ -13,9 +13,27 @@ WARNING
 
 Change the mysql root password in production and limit access to galera cluster members!
 
-
 TODO
 
  * naming: master -> donor
  * put a load balancer in front of the cluster
  * make cluster "masterless"
+
+nodes.pp
+
+# nodes
+$cluster_name = 'geloet'
+
+node /host01/ {
+    class { 'galera' :
+        cluster_name => $cluster_name
+    }
+}
+
+node /host0([2-9])/ {
+    $master_ip = '33.33.33.11'
+    class { 'galera' :
+        cluster_name => $cluster_name,
+        master_ip    => $master_ip
+    }
+}
