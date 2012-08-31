@@ -9,6 +9,7 @@ class galera($cluster_name, $master_ip = false) {
         ensure      => "running",
         require     => [Package["mysql-server-wsrep","galera","mysql-client-5.5","libaio1","libssl0.9.8"],File["/etc/mysql/conf.d/wsrep.cnf","/etc/mysql/my.cnf"]],
         hasrestart  => true,
+	hasstatus   => true,
 #       hasstatus   => true, // http://projects.puppetlabs.com/issues/5610
     }
 
