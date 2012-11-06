@@ -5,6 +5,9 @@ class galera::haproxy(
   $mysql_password 	= 'password',
   $haproxy_user		= 'haproxy',
 ) 
+
+  #inherits galera
+
 {
   exec { "haproxy-monitor" :
         command     => "/usr/bin/mysql -u${mysql_user} -p${mysql_password} -e \"USE mysql; INSERT INTO user (Host,User) values ('%','${haproxy_user}'); FLUSH PRIVILEGES;\"",
