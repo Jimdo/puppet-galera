@@ -25,13 +25,10 @@ class galera::health_check(
   $mysql_bin_dir        = '/usr/bin/mysql',
   $mysqlchk_script_dir  = '/usr/local/bin',
   $xinetd_dir 	        = '/etc/xinetd.d',
+  $mysqlchk_user        = 'mysqlchk_user',
+  $mysqlchk_password    = 'mysqlchk_password',
   $enabled              = true,
-) 
-
-  inherits galera {
-
-  $mysqlchk_user        = $mysql_user
-  $mysqlchk_password    = $mysql_password
+) {
 
   # Needed to manage /etc/services
   include augeas
@@ -47,8 +44,6 @@ class galera::health_check(
     enable      => $enabled,
     require     => [Package['xinetd'],File["${xinetd_dir}/mysqlchk"]],
     subscribe   => File["${xinetd_dir}/mysqlchk"],
-    #hasrestart  => true,
-    #hasstatus   => true,
   }
 
   package { 'xinetd':
@@ -101,15 +96,11 @@ class galera::health_check(
     onlyif => "match service-name[port = '9200'] size == 0",
   }
 
-
-# Create a user to check MySQL health status if a user other than root is specified.
-if $mysqlchk_user != $mysql_user {
-
+  # Create a user for script to use for checking MySQL health status.
   galera::db { 'mysql':
     user     => $mysqlchk_user,
     password => $mysqlchk_password,
     host     => $mysql_host,
     grant    => ['all']
   }
- }
 }

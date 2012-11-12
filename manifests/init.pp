@@ -9,13 +9,6 @@ class galera(
     $etc_root_password    = false,
     $enabled              = true,
 ) {
-
-    #$mysql_user           = 'wsrep_sst'
-    #$mysql_password       = 'password'
-    #$root_password        = 'password'
-    #$old_root_password    = ''
-    #$etc_root_password    = false
-    #$enabled              = true
    
    if $enabled {
     $service_ensure = 'running'
